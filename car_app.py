@@ -10,7 +10,7 @@ with open('final_model_XGBoost.pkl', 'rb') as file:
 
 st.header('Car Price Prediction ML Model')
 
-cars_data = pd.read_csv('Cardetails.csv')
+cars_data = pd.read_csv('car_prices.csv')
 
 def get_brand_name(car_name):
     car_name = car_name.split(' ')[0]
