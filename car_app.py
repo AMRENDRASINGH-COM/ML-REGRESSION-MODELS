@@ -2,8 +2,11 @@ import pandas as pd
 import numpy as np 
 import pickle as pk 
 import streamlit as st
+import joblib
 
-model = pk.load(open('final_model_XGBoost.pkl','rb'))
+with open('final_model_XGBoost.pkl', 'rb') as file:
+    model = joblib.load(file)
+
 
 st.header('Car Price Prediction ML Model')
 
