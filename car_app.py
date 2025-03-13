@@ -5,7 +5,7 @@ import streamlit as st
 import joblib
 
 with open('final_model_XGBoost.pkl', 'rb') as file:
-    model = joblib.load(file)
+    model = pickle.load(file)
 
 
 st.header('Car Price Prediction ML Model')
