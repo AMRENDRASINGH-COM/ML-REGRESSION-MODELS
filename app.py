@@ -21,31 +21,24 @@ st.title("Car Price Prediction App")
 st.write("This application predicts the price of a car based on various features.")
 
 # Creating input fields
-sym = st.slider("SYMBOLING: INSURANCE RISK RATING", min_value=-2, max_value=3, step=1)
-fuel = st.selectbox("FUEL TYPE", [('gas', 0), ("Diesel", 1)])
-aspi = st.selectbox("ASPIRATION", [("std", 0), ("turbo", 1)])
-door = st.selectbox("DOOR NUMBER", [('four', 1), ('two', 0)])
-carbody = st.selectbox("CAR BODY", [("Sedan", 0.47), ("convertible", 0.03), ("Hatchback", 0.34), ("hardtop", 0.16)])
-drivewheel = st.selectbox("DRIVE WHEEL", [('fwd', 0), ('rwd', 1), ('4wd', 2)])
-engine_l = st.selectbox("ENGINE LOCATION", [('front', 0), ('rear', 1)])
-companyName = st.selectbox("Company Name", [('alfa-romero', 0.01), ('audi', 0.03), ('bmw', 0.04), ('chevrolet', 0.01), ('dodge', 0.04),
-                                            ('honda', 0.06), ('isuzu', 0.02), ('jaguar', 0.01), ('maxda', 0.01), ('mazda', 0.07),
-                                            ('buick', 0.04), ('mitsubishi', 0.06), ('Nissan', 0.00), ('peugeot', 0.05),
-                                            ('porsche', 0.02), ('toyota', 0.15), ('volkswagen', 0.04), ('volvo', 0.05)])
-whel_b = st.slider("WHEELBASE", min_value=60.0, max_value=120.0, step=0.5)
-car_l = st.slider("CAR LENGTH", min_value=1.0, max_value=200.0, step=0.5)
-car_w = st.slider("CAR WIDTH", min_value=1.0, max_value=100.0, step=0.5)
-car_h = st.slider("CAR HEIGHT", min_value=50.0, max_value=100.0, step=0.5)
-cur_weg = st.number_input("CURB WEIGHT", min_value=500, max_value=5000)
-eng_ty = st.selectbox("ENGINE TYPE", [("ohc", 0.72), ("ohcf", 0.07), ("ohcv", 0.06), ("dohc", 0.06), ('l', 0.72), ('rotor', 0.02), ('dohcv', 0.00)])
-cylind_num = st.selectbox("CYLINDER NUMBER", [2, 3, 4, 5, 6, 8, 12])
-engi_siz = st.slider("ENGINE SIZE", min_value=60.0, max_value=105.0, step=0.5)
-fuel_sys = st.selectbox("FUEL SYSTEM", [('mpfi', 0.46), ('2bbl', 0.32), ('idi', 0.10), ('1bbl', 0.05), ('spdi', 0.04), ('4bbl', 0.01), ('mfi', 0.00), ('spfi', 0.00)])
-strok = st.slider("STROKE", min_value=0.0, max_value=20.0, step=1.0)
-h_p = st.slider("HORSEPOWER", min_value=0.0, max_value=100.0, step=1.0)
-peak = st.slider("PEAK RPM", min_value=0.0, max_value=30.0, step=1.0)
-citmp = st.slider("CITY MPG", min_value=5, max_value=70, step=1)
-highmp = st.slider("HIGHWAY MPG", min_value=5, max_value=100, step=1)
+gr.Interface(fn=prediction,inputs=[gr.Slider(minimum=-2, maximum=3, step=1,label = "SYMBOLING: INSURANCE RISK RATING"),
+        gr.Dropdown(choices=[('gas',0), ("Diesel",1)], label="FUEL TYPE"),
+        gr.Dropdown(choices=[("std",0), ("turbo",1)], label="ASPIRATION"),
+        gr.Dropdown(choices=[('four',1),('two',0)], label="DOOR NUMBER"),
+        gr.Dropdown(choices=[('fwd',0),('rwd',1),('4wd',2)], label="DRIVE WHEEL"),
+        gr.Dropdown(choices=[('front',0),('rear',1)], label="ENGINE LOCATION"),
+        gr.Number(label="CURB WEIGHT"),
+        gr.Dropdown(choices=[("ohc",0.72),("ohcf",0.07),("ohcv",0.06),("dohc",0.06),('l',0.72),('rotor',0.02),('dohcv',0.00)],label="ENGINE TYPE"),
+        gr.Dropdown(choices=[2,3,4,5,6,8,12], label="CYLINDER NUMBER"),
+        gr.Slider(minimum=60, maximum=105, step=0.5,label="ENGINE SIZE"),
+        gr.Dropdown(choices=[('mpfi',0.46),('2bbl',0.32),('idi',0.10),('1bbl',0.05),('spdi',0.04),('4bbl',0.01),('mfi',0.00),('spfi',0.00)],label="FUEL SYSTEM"),
+        gr.Slider(minimum=0, maximum=100, step=1,label="HORSEPOWER"),
+        gr.Dropdown(choices=[("toyota", 0.151220), ("nissan", 0.063415), ("mazda", 0.053659), 
+                     ("honda", 0.043902), ("mitsubishi", 0.082927), ("subaru", 0.039024), 
+                     ("peugeot", 0.0731), ("volvo", 0.034146), ("volkswagen", 0.058537), 
+                     ("dodge", 0.014634), ("buick", 0.019512), ("bmw", 0.009756), 
+                     ("audi", 0.029268), ("playmouth", 0.004878)], label="CARCOMPANY"),
+        gr.Slider(minimum=5, maximum=1000, step=1,label="CAR AREA")],
 
 # Prediction button
 if st.button("Predict Price"):
