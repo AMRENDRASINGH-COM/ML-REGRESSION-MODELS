@@ -13,7 +13,7 @@ st.set_page_config(page_title="Car Price Predictor", page_icon="🚗", layout="w
 col1, col2 = st.columns([1, 3])
 with col1:
     # Replace 'car_image.jpg' with your actual image path
-    car_image = Image.open('car_image.jpg')
+    car_image = Image.open('geely car image2.jpg')
     st.image(car_image, width=300, caption='Car Price Prediction Model')
 
 with col2:
