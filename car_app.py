@@ -1,51 +1,55 @@
-import pandas as pd 
-import numpy as np 
-import pickle as pk 
 import streamlit as st
+import pickle
+import pandas as pd
 
-model = pk.load(open('final_model_XGBoost.pkl','rb'))
+# Load the model
+model = pickle.load(open('final_model_XGBoost.pkl', 'rb'))
 
 st.header('Car Price Prediction ML Model')
 
-cars_data = pd.read_csv('car_prices.csv')
+# Define input fields matching the model's expected features
+symboling = st.slider("Insurance Risk Rating (Symboling)", -2, 3, 0, step=1)
+fueltype = st.selectbox("Fuel Type", ["gas", "diesel"])
+aspiration = st.selectbox("Aspiration", ["std", "turbo"])
+doornumber = st.selectbox("Door Number", ["two", "four"])
+drivewheel = st.selectbox("Drive Wheel", ["fwd", "rwd", "4wd"])
+enginelocation = st.selectbox("Engine Location", ["front", "rear"])
+curbweight = st.number_input("Curb Weight (kg)", min_value=500, max_value=3000, value=1500)
+enginetype = st.selectbox("Engine Type", ["ohc", "ohcf", "ohcv", "dohc", "l", "rotor", "dohcv"])
+cylindernumber = st.selectbox("Cylinder Number", [2, 3, 4, 5, 6, 8, 12])
+enginesize = st.slider("Engine Size (cc)", 60, 105, 90)
+fuelsystem = st.selectbox("Fuel System", ["mpfi", "2bbl", "idi", "1bbl", "spdi", "4bbl", "mfi", "spfi"])
+horsepower = st.slider("Horsepower", 0, 100, 50)
+carcompany = st.selectbox("Car Company", [
+    "toyota", "nissan", "mazda", "honda", "mitsubishi", "subaru", 
+    "peugeot", "volvo", "volkswagen", "dodge", "buick", "bmw", 
+    "audi", "plymouth", "saab", "isuzu", "porsche", "alfa-romero", 
+    "chevrolet", "jaguar"
+])
+car_area = st.slider("Car Area (sq cm)", 5, 1000, 500)
 
-def get_brand_name(car_name):
-    car_name = car_name.split(' ')[0]
-    return car_name.strip()
-cars_data['name'] = cars_data['name'].apply(get_brand_name)
-
-name = st.selectbox('Select Car Brand', cars_data['name'].unique())
-year = st.slider('Car Manufactured Year', 1994,2024)
-km_driven = st.slider('No of kms Driven', 11,200000)
-fuel = st.selectbox('Fuel type', cars_data['fuel'].unique())
-seller_type = st.selectbox('Seller  type', cars_data['seller_type'].unique())
-transmission = st.selectbox('Transmission type', cars_data['transmission'].unique())
-owner = st.selectbox('Seller  type', cars_data['owner'].unique())
-mileage = st.slider('Car Mileage', 10,40)
-engine = st.slider('Engine CC', 700,5000)
-max_power = st.slider('Max Power', 0,200)
-seats = st.slider('No of Seats', 5,10)
-
+# Map categorical values to model's expected encoding
+fuel_enc = 0 if fueltype == "gas" else 1
+aspiration_enc = 0 if aspiration == "std" else 1
+doornumber_enc = 0 if doornumber == "two" else 1
+drivewheel_enc = {"fwd": 0, "rwd": 1, "4wd": 2}[drivewheel]
+enginelocation_enc = 0 if enginelocation == "front" else 1
+enginetype_enc = {
+    "ohc": 0.72, "ohcf": 0.07, "ohcv": 0.06, 
+    "dohc": 0.06, "l": 0.72, "rotor": 0.02, "dohcv": 0.00
+}[enginetype]
+fuelsystem_enc = {
+    "mpfi": 0.46, "2bbl": 0.32, "idi": 0.10, 
+    "1bbl": 0.05, "spdi": 0.04, "4bbl": 0.01, 
+    "mfi": 0.00, "spfi": 0.00
+}[fuelsystem]
 
 if st.button("Predict"):
-    input_data_model = pd.DataFrame(
-    [[name,year,km_driven,fuel,seller_type,transmission,owner,mileage,engine,max_power,seats]],
-    columns=['name','year','km_driven','fuel','seller_type','transmission','owner','mileage','engine','max_power','seats'])
+    input_data = [[
+        symboling, fuel_enc, aspiration_enc, doornumber_enc, drivewheel_enc,
+        enginelocation_enc, curbweight, enginetype_enc, cylindernumber,
+        enginesize, fuelsystem_enc, horsepower, carcompany, car_area
+    ]]
     
-    input_data_model['owner'].replace(['First Owner', 'Second Owner', 'Third Owner',
-       'Fourth & Above Owner', 'Test Drive Car'],
-                           [1,2,3,4,5], inplace=True)
-    input_data_model['fuel'].replace(['Diesel', 'Petrol', 'LPG', 'CNG'],[1,2,3,4], inplace=True)
-    input_data_model['seller_type'].replace(['Individual', 'Dealer', 'Trustmark Dealer'],[1,2,3], inplace=True)
-    input_data_model['transmission'].replace(['Manual', 'Automatic'],[1,2], inplace=True)
-    input_data_model['name'].replace(['Maruti', 'Skoda', 'Honda', 'Hyundai', 'Toyota', 'Ford', 'Renault',
-       'Mahindra', 'Tata', 'Chevrolet', 'Datsun', 'Jeep', 'Mercedes-Benz',
-       'Mitsubishi', 'Audi', 'Volkswagen', 'BMW', 'Nissan', 'Lexus',
-       'Jaguar', 'Land', 'MG', 'Volvo', 'Daewoo', 'Kia', 'Fiat', 'Force',
-       'Ambassador', 'Ashok', 'Isuzu', 'Opel'],
-                          [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
-                          ,inplace=True)
-
-    car_price = model.predict(input_data_model)
-
-    st.markdown('Car Price is going to be '+ str(car_price[0]))
+    prediction = model.predict(input_data)
+    st.success(f"Predicted Car Price: ₹{prediction[0]:.2f}")
