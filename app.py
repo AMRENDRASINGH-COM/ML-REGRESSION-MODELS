@@ -38,7 +38,7 @@ gr.Interface(fn=prediction,inputs=[gr.Slider(minimum=-2, maximum=3, step=1,label
                      ("peugeot", 0.0731), ("volvo", 0.034146), ("volkswagen", 0.058537), 
                      ("dodge", 0.014634), ("buick", 0.019512), ("bmw", 0.009756), 
                      ("audi", 0.029268), ("playmouth", 0.004878)], label="CARCOMPANY"),
-        gr.Slider(minimum=5, maximum=1000, step=1,label="CAR AREA")],
+        gr.Slider(minimum=5, maximum=1000, step=1,label="CAR AREA")]),
 
 # Prediction button
 if st.button("Predict Price"):
